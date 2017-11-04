@@ -1,0 +1,32 @@
+
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "taskName": "Build HW1",
+            "type": "shell",
+            "command": "make",
+            "presentation": {
+                "echo": true,
+                "reveal": "never",
+                "focus": false,
+                "panel": "shared"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "taskName": "Build HW1 debug",
+            "type": "shell",
+            "command": "make debug",
+            "presentation": {
+                "echo": true,
+                "reveal": "never",
+                "focus": false,
+                "panel": "shared"
+            }
+        }
+    ]
+}
