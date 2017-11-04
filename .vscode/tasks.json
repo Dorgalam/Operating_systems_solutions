@@ -5,7 +5,7 @@
         {
             "taskName": "Build HW1",
             "type": "shell",
-            "command": "make",
+            "command": "cd ./ex1/q1 && make",
             "presentation": {
                 "echo": true,
                 "reveal": "never",
@@ -20,7 +20,7 @@
         {
             "taskName": "Build HW1 debug",
             "type": "shell",
-            "command": "make debug",
+            "command": "cd ./ex1/q1 && make debug",
             "presentation": {
                 "echo": true,
                 "reveal": "never",

@@ -3,3 +3,6 @@ prog: main.c
 
 debug: main.c
 	gcc -g -o prog main.c -I.
+
+clean:
+	rm -rf prog prog.dSYM
