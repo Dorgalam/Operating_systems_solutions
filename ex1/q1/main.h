@@ -73,5 +73,3 @@ typedef struct List {
     listNode *head;
     listNode *tail;
 } List;
-
-List polygonList;

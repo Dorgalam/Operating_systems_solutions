@@ -2,16 +2,16 @@
         "version": "0.2.0",
         "configurations": [
             {
-                "name": "(lldb) Launch",
+                "name": "Launch q1",
                 "type": "cppdbg",
                 "request": "launch",
-                "program": "${workspaceRoot}/prog",
+                "program": "${workspaceRoot}/polygon",
                 "args": [],
                 "stopAtEntry": false,
                 "cwd": "${workspaceRoot}",
                 "environment": [],
                 "MIMode": "lldb",
-                "preLaunchTask": "Build HW1 debug",
+                "preLaunchTask": "build",
                 "externalConsole": true
             }
         ]

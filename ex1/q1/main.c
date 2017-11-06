@@ -1,5 +1,7 @@
 #include "main.h"
 
+List polygonList;
+
 void runFunction(char func, int64 funcInput) {
     (*polygon_functions[func])(funcInput);
 }
@@ -44,6 +46,7 @@ void getXAndY(int64 input, char *_x, char *_y, int vertixNumber) {
 void add_polygon(int64 input) {
     listNode *newItem = (listNode*)malloc(sizeof(listNode));
     newItem->polygon = input;
+    newItem->next = NULL;
     if (polygonList.head == NULL) {
         polygonList.head = polygonList.tail = newItem;
     } else {
@@ -95,6 +98,7 @@ void print_polygon(int64 input) {
         printf(" {%d, %d}", x, y);
     }
     printf("\n");
+
 }
 void do_current(int64 input) {
     char action = getAction(input);
@@ -133,7 +137,7 @@ void do_all(int64 input) {
 
 void freeList() {
     listNode* tmp, *head = polygonList.head;
-    while (head) {
+    while (head != NULL) {
         tmp = head;
         head = head->next;
         free(tmp);
@@ -149,13 +153,12 @@ int main(int argc, const char *argv[])
     polygonList.tail = NULL;
     int numVertices, i = 0;
     bool done = false;
-
     while (!done) {
         scanf("%16llx", &input);
+        runOn = getWhomRunOn(input);
         if (isNewPolygon(input)) {
             runFunction(ADD_POLYGON, input);
         }
-        runOn = ALL_TRIANGLES;
         if (runOn == THIS_POLYGON) {
             runFunction(DO_CURRENT, input);
         } else {

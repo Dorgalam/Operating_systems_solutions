@@ -1,0 +1,18 @@
+triangle {5, 5} {5, 0} {0, 5}
+	 perimeter = 17.1
+	 area = 12.5
+square {6, 6} {6, 0} {0, 0} {0, 6}
+	 perimeter = 24.0
+	 area = 36.0
+triangle {0, 0} {0, 5} {5, 5}
+	 perimeter = 17.1
+	 area = 12.5
+square {-6, -6} {-6, 0} {0, 0} {0, -6}
+triangle {5, 5} {5, 0} {0, 5}
+square {6, 6} {6, 0} {0, 0} {0, 6}
+triangle {0, 0} {0, 5} {5, 5}
+square {-6, -6} {-6, 0} {0, 0} {0, -6}
+triangle {5, 5} {5, 0} {0, 5}
+triangle {0, 0} {0, 5} {5, 5}
+square {6, 6} {6, 0} {0, 0} {0, 6}
+square {-6, -6} {-6, 0} {0, 0} {0, -6}

@@ -3,30 +3,32 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "taskName": "Build HW1",
+            "taskName": "build",
             "type": "shell",
-            "command": "cd ./ex1/q1 && make",
+            "command": "make debug",
             "presentation": {
                 "echo": true,
                 "reveal": "never",
                 "focus": false,
                 "panel": "shared"
             },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+            "problemMatcher": [
+                "$gcc"
+            ]
         },
         {
-            "taskName": "Build HW1 debug",
+            "taskName": "test",
             "type": "shell",
-            "command": "cd ./ex1/q1 && make debug",
+            "command": "make test",
             "presentation": {
                 "echo": true,
                 "reveal": "never",
                 "focus": false,
                 "panel": "shared"
-            }
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
         }
     ]
 }
