@@ -1,3 +1,6 @@
 **/polygon*
 **/*.log
 **/out.log
+**/*.tar
+**/.DS_STORE
+311232268/
