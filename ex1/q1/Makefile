@@ -18,7 +18,7 @@ debug: main.c
 	gcc -g -o polygon main.c -I.
 
 all: 
-	$(PROG1) test
+	./$(PROG1) test
 clean: 
 	rm -rf polygon polygon.dSYM *.o *.log
 test: 
