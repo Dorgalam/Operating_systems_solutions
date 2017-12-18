@@ -143,41 +143,6 @@ void freeList() {
     }
 }
 
-// void runReaderProcess(int writerType, int fd[3][2]) {
-//     char buff[3], polygonBuffer[80];
-//     unsigned int polygonParts[2];
-//     bool writeVal = false;
-//     int64 nextPolygon;
-//     if (writerType == 32) {
-//         close(fd[0][1]);
-//         close(fd[1][0]);
-//         close(fd[1][1]);
-//         close(fd[2][0]);
-
-//     } else {
-//         close(fd[0][1]);
-//         close(fd[0][0]);
-//         close(fd[1][1]);
-//         close(fd[2][0]);
-//     }
-//     if(writerType == 32) {
-//         read(fd[0][0], buff, 1);
-//         scanf("%x", &polygonParts[0]);
-//         scanf("%x", &polygonParts[1]);
-//         nextPolygon = polygonParts[1];
-//         nextPolygon = nextPolygon << 32;
-//         nextPolygon += polygonParts[0];
-//     } else {
-//         printf("%d\n", writerType); 
-//         read(fd[1][0], buff, 1);
-//         scanf("%16llx", &nextPolygon);
-//     }
-//     sprintf(polygonBuffer, "%16llx", nextPolygon);
-//     write(fd[2][1], polygonBuffer, strlen(polygonBuffer) + 1);
-//     exit(0);
-// }
- 
-
 void runWriterProcess(char *outFile, int writerFd[2]) {
     close(writerFd[1]);
     close(0);
@@ -206,6 +171,20 @@ void seekNext(int nextNum) {
     }
 }
 
+bool runOnPolygon(int64 polygon) {
+    char runOn;
+    runOn = getWhomRunOn(polygon);
+    if (isNewPolygon(polygon)) {
+        runFunction(ADD_POLYGON, polygon);
+    }
+    if (runOn == THIS_POLYGON) {
+        runFunction(DO_CURRENT, polygon);
+    } else {
+        runFunction(DO_ALL, polygon);
+    }
+    bool res =  isLastIteration(polygon);
+    return res;
+}
 
 void createReaders(pid_t *reader32pid, pid_t *reader64pid) {
     int fd32[2], fd64[2], fdBoth[2], readerToRun;
@@ -257,9 +236,8 @@ void createReaders(pid_t *reader32pid, pid_t *reader64pid) {
     close(fd32[0]);
     close(fd64[0]);
     close(fdBoth[1]);
-    for(int i = 0 ; i < 3; ++i) {
+    for(;;) {
         scanf("%d", &readerToRun);
-        printf("next is %d\n", readerToRun);
         if (readerToRun == 32) {
             write(fd32[1], "1\0", 2);
             scanf("%lx %lx", &polygonParts[0], &polygonParts[1]);
@@ -267,8 +245,9 @@ void createReaders(pid_t *reader32pid, pid_t *reader64pid) {
             write(fd64[1], "1\0", 2);
             scanf("%16llx", &nextPolygon);
         }
-        int readAm = read(fdBoth[0], polygonBuffer, 16);
-        printf("%s was read which was %d long\n", polygonBuffer, readAm);
+        read(fdBoth[0], polygonBuffer, 16);
+        sscanf(polygonBuffer, "%16llx", &nextPolygon);
+        if(runOnPolygon(nextPolygon)) break;
     }
     write(fd32[1], "0\n", 2);
     write(fd64[1], "0\n", 2);
@@ -276,7 +255,8 @@ void createReaders(pid_t *reader32pid, pid_t *reader64pid) {
 
 int main(int argc, const char *argv[])
 {   
-
+    polygonList.head = NULL;
+    polygonList.tail = NULL;
     pid_t writerPid, reader32pid, reader64pid;
     int writerFd[2];
     char outFile[11];
@@ -291,58 +271,10 @@ int main(int argc, const char *argv[])
         close(writerFd[1]);
         createReaders(&reader32pid, &reader64pid);
     }
+    int64 input, mask = 0b1;
 
-//     for (int i = 0; i < 3; ++i) //one is with 32, two is with 64 and three is for both
-//         pipe(fd[i]);
-//     if ((childpid[1] = fork()) == 0) {
-//         runReaderProcess(32, fd);
-//     }
-//     if ((childpid[2] = fork()) == 0) {
-//         runReaderProcess(64, fd);
-//     }
-//     pipe(writerFd);
-
-//     int nextInputSize;
-//     unsigned int polygonParts[2];
-//     char input[3];
-//     int64 nextWholePolygon;
-//     close(fd[0][0]);
-//     close(fd[1][0]);
-//     close(fd[2][1]);
-//     int amountRead;
-//     for(int i = 0 ; i < 2; ++i) {
-//         read(0, input, 2);
-//         if (atoi(input) == 32) {
-//             write(fd[0][1], "1", 1);
-//         } else if (nextInputSize == 64) {
-//             write(fd[1][1], "1", 1);
-//         }
-//         read(fd[2][0], buff, 17);
-//         sscanf(buff, "%16llx", &nextWholePolygon);
-//         buff[0] = '\0';
-//         printf("%16llx\n", nextWholePolygon);
-//    }
-//     while(wait(NULL)>0);
-    // int64 input, mask = 0b1;
-    // char x,y, runOn;
-    // polygonList.head = NULL;
-    // polygonList.tail = NULL;
-    // int numVertices, i = 0;
-    // bool done = false;
-    // while (!done) {
-    //     scanf("%16llx", &input);
-    //     runOn = getWhomRunOn(input);
-    //     if (isNewPolygon(input)) {
-    //         runFunction(ADD_POLYGON, input);
-    //     }
-    //     if (runOn == THIS_POLYGON) {
-    //         runFunction(DO_CURRENT, input);
-    //     } else {
-    //         runFunction(DO_ALL, input);
-    //     }
-        
-    //     done = isLastIteration(input);
-    // }
-    // freeList();
+    int numVertices, i = 0;
+    freeList();
     return 0;
 }
+

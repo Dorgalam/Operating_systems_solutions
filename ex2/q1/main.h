@@ -64,6 +64,7 @@ void runWriterProcess(char *outputName, int fd[2]);
 void runReaderProcess(int writerType, int fd[3][2]);
 void createReaders(int *reader32Pid, int *reader64Pid);
 void seekNext(int nextNum);
+bool runOnPolygon(int64 polygon);
 
 void (*polygon_functions[6])(int64) = {
     add_polygon,
