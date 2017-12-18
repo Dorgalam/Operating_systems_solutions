@@ -271,9 +271,6 @@ int main(int argc, const char *argv[])
         close(writerFd[1]);
         createReaders(&reader32pid, &reader64pid);
     }
-    int64 input, mask = 0b1;
-
-    int numVertices, i = 0;
     freeList();
     return 0;
 }
