@@ -145,7 +145,7 @@ void freeList() {
 
 void runWriterProcess(char *outFile, int writerFd[2]) {
     close(writerFd[1]);
-    close(0);
+    close(STDIN_FILENO);
     dup(writerFd[0]);
     close(writerFd[0]);
     char *const params[] = {"./writer", outFile, NULL};
@@ -186,6 +186,67 @@ bool runOnPolygon(int64 polygon) {
     return res;
 }
 
+void reader32(int INSIG, int OUTPUT) {
+    long unsigned polygonParts[2];
+    char runSignal[2], polygonBuffer[17];
+    int64 nextPolygon;
+    for(;;) {
+        read(INSIG, runSignal, 2);
+        if (runSignal[0] != '1') {
+            break;
+        }
+        seekNext(32);
+        scanf("%lx", &polygonParts[0]);
+        scanf("%lx", &polygonParts[1]);
+        nextPolygon = polygonParts[1];
+        nextPolygon = nextPolygon << 32;
+        nextPolygon += polygonParts[0];
+        sprintf(polygonBuffer, "%16llx", nextPolygon);
+        write(OUTPUT, polygonBuffer, (int)strlen(polygonBuffer));
+    }
+    finishError("reader32\0");
+    exit(EXIT_SUCCESS);
+}
+
+void reader64(int INSIG, int OUTPUT) {
+    char runSignal[2], polygonBuffer[17];
+    int64 nextPolygon;
+    for(;;) {
+        read(INSIG, runSignal, 2);
+        if (runSignal[0] != '1') {
+            break;
+        }
+        seekNext(64);
+        scanf("%16llx", &nextPolygon);
+        sprintf(polygonBuffer, "%16llx", nextPolygon);
+        write(OUTPUT, polygonBuffer, 16);
+    }
+    finishError("reader64\0");
+    exit(EXIT_SUCCESS);
+}
+
+void runMainLoop(int reader32, int reader64, int readPipe) {
+    long unsigned dummy[2];
+    int64 bigDummy, nextPolygon;
+    char polygonBuffer[17];
+    int readerToRun;
+    for(;;) {
+        scanf("%d", &readerToRun);
+        if (readerToRun == 32) {
+            write(reader32, "1\0", 2);
+            scanf("%lx %lx", &dummy[0], &dummy[1]);
+        } else {
+            write(reader64, "1\0", 2);
+            scanf("%16llx", &bigDummy);
+        }
+        read(readPipe, polygonBuffer, 16);
+        sscanf(polygonBuffer, "%16llx", &nextPolygon);
+        if(runOnPolygon(nextPolygon)) break;
+    }
+    write(reader32, "0\n", 2);
+    write(reader64, "0\n", 2);
+}
+
 void createReaders(pid_t *reader32pid, pid_t *reader64pid) {
     int fd32[2], fd64[2], fdBoth[2], readerToRun;
     long unsigned polygonParts[2];
@@ -200,57 +261,28 @@ void createReaders(pid_t *reader32pid, pid_t *reader64pid) {
         close(fd64[0]);
         close(fd64[1]);
         close(fdBoth[0]);
-        for(;;) {
-            read(fd32[0], runSignal, 2);
-            if (runSignal[0] != '1') {
-                break;
-            }
-            seekNext(32);
-            scanf("%lx", &polygonParts[0]);
-            scanf("%lx", &polygonParts[1]);
-            nextPolygon = polygonParts[1];
-            nextPolygon = nextPolygon << 32;
-            nextPolygon += polygonParts[0];
-            sprintf(polygonBuffer, "%16llx", nextPolygon);
-            write(fdBoth[1], polygonBuffer, (int)strlen(polygonBuffer));
-        }
-        exit(EXIT_SUCCESS);
+        reader32(fd32[0], fdBoth[1]);
     }
     if ((*reader64pid = fork()) == 0) {
         close(fd32[0]);
         close(fd32[1]);
         close(fd64[1]);
         close(fdBoth[0]);
-        for(;;) {
-            read(fd64[0], runSignal, 2);
-            if (runSignal[0] != '1') {
-                break;
-            }
-            seekNext(64);
-            scanf("%16llx", &nextPolygon);
-            sprintf(polygonBuffer, "%16llx", nextPolygon);
-            write(fdBoth[1], polygonBuffer, 16);
-        }
-        exit(EXIT_SUCCESS);
+        reader64(fd64[0], fdBoth[1]);
     }
     close(fd32[0]);
     close(fd64[0]);
     close(fdBoth[1]);
-    for(;;) {
-        scanf("%d", &readerToRun);
-        if (readerToRun == 32) {
-            write(fd32[1], "1\0", 2);
-            scanf("%lx %lx", &polygonParts[0], &polygonParts[1]);
-        } else {
-            write(fd64[1], "1\0", 2);
-            scanf("%16llx", &nextPolygon);
-        }
-        read(fdBoth[0], polygonBuffer, 16);
-        sscanf(polygonBuffer, "%16llx", &nextPolygon);
-        if(runOnPolygon(nextPolygon)) break;
-    }
-    write(fd32[1], "0\n", 2);
-    write(fd64[1], "0\n", 2);
+    runMainLoop(fd32[1], fd64[1], fdBoth[0]);
+    wait(NULL);
+    wait(NULL);
+    finishError("main_process\0");
+}
+
+void finishError(char processName[13]) {
+    char output[50];
+    sprintf(output, "%s pid=%d is going to exit\n", processName, getpid());
+    write(STDERR_FILENO, output, strlen(output) + 1);
 }
 
 int main(int argc, const char *argv[])
@@ -266,7 +298,7 @@ int main(int argc, const char *argv[])
         runWriterProcess(outFile, writerFd);
     } else {
         close(writerFd[0]);
-        close(1);
+        close(STDOUT_FILENO);
         dup(writerFd[1]);
         close(writerFd[1]);
         createReaders(&reader32pid, &reader64pid);
