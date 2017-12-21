@@ -257,7 +257,7 @@ bool runOnPolygon(int64 polygon) {
 
     int main(int argc, const char *argv[])
     {   
-        setvbuf(stdin, "\n", _IONBF, 0);
+        setvbuf(stdin, "\n", _IONBF, 0); // this line is a must for using the program with output redirection
         polygonList.head = NULL;
         polygonList.tail = NULL;
         pid_t writerPid, reader32pid, reader64pid;
