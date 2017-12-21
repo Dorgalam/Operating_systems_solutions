@@ -28,3 +28,4 @@ fs.img
 kernelmemfs
 mkfs
 .gdbinit
+_*

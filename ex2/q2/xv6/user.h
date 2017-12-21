@@ -1,5 +1,6 @@
 struct stat;
 struct rtcdate;
+struct proc_data;
 
 // system calls
 int fork(void);
@@ -15,6 +16,7 @@ int open(char*, int);
 int mknod(char*, short, short);
 int unlink(char*);
 int fstat(int fd, struct stat*);
+int get_proc_data(int pid, struct proc_data* datavoid);
 int link(char*, char*);
 int mkdir(char*);
 int chdir(char*);
