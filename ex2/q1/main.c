@@ -177,7 +177,8 @@ bool runOnPolygon(int64 polygon) {
             nextPolygon = polygonParts[1];
             nextPolygon = nextPolygon << 32;
             nextPolygon += polygonParts[0];
-            write(OUTPUT, &nextPolygon, 8);
+            sprintf(polygonBuffer, "%16llx", nextPolygon);
+            write(OUTPUT, polygonBuffer, (int)strlen(polygonBuffer));
         }
         finishError("reader32\0");
         exit(EXIT_SUCCESS);
