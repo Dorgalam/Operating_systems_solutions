@@ -23,6 +23,6 @@ writer: writer.c
 	CC -o writer writer.c
 
 clean: 
-	rm -rf polygon polygon.dSYM *.o *.log
+	rm -rf polygon writer out.txt polygon.dSYM *.o *.log
 test: 
 	./$(PROG1) < in.txt 
