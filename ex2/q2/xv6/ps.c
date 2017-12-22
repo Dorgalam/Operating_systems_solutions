@@ -25,9 +25,10 @@ main(int argc, char *argv[])
 void 
 print_proc_and_children(int pid) {
   struct proc_data p;
+  int i;
   get_proc_data(pid, &p);
   print_proc_data(&p);
-  for(int i = 0; i < p.chld_num; ++i)
+  for(i = 0; i < p.chld_num; ++i)
     print_proc_and_children(p.pids[i]);
 }
 

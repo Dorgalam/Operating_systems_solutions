@@ -29,10 +29,17 @@ OBJS = \
 	vm.o\
 
 # Cross-compiling (e.g., on Mac OS X)
-TOOLPREFIX = i386-jos-elf-
+# TOOLPREFIX = i386-jos-elf-
 
 # Using native tools (e.g., on X86 Linux)
-# TOOLPREFIX = i386-elf-
+TOOLPREFIX = i386-elf-
+
+ifeq ($(TERM_PROGRAM), vscode)
+    TOOLPREFIX = i386-jos-elf-
+else ifeq ($(TERM_PROGRAM), Apple_Terminal)
+    TOOLPREFIX = i386-jos-elf-
+endif
+
 
 # Try to infer the correct TOOLPREFIX if not set
 ifndef TOOLPREFIX

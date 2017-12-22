@@ -9,6 +9,7 @@ main(int argc, char *argv[])
 {
   int N, fd[2];
   char buff[2];
+  int i;
   if(argc < 2 || (N = atoi(argv[1]))  < 1) {
    printf(2, "no valid pid was supplied\n");
    exit();
@@ -17,7 +18,7 @@ main(int argc, char *argv[])
   newArgv[1] = "1";
   newArgv[2] = 0;
   pipe(fd);
-  for(int i = 0; i < N; ++i) {
+  for(i = 0; i < N; ++i) {
     if(fork() == 0) {
       close(fd[1]);
       read(fd[0], buff, 1);
@@ -30,7 +31,7 @@ main(int argc, char *argv[])
     exit();
   }
   close(fd[1]);
-  for(int i = 0; i < N + 1; ++i)
+  for(i = 0; i < N + 1; ++i)
     wait();
   exit();
 }
