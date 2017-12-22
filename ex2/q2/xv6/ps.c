@@ -35,10 +35,10 @@ print_proc_and_children(int pid) {
 void 
 print_proc_data(struct proc_data* pdata)
 {
-     int i;
-     printf(1, "%s %d #children: %d  children PIDs: ",
-            pdata->name, pdata->pid, pdata->chld_num);
-     for (i=0; i < pdata->chld_num; i++)
-          printf(1, "%d ", pdata->pids[i]);
-     printf(1,"\n");
+  int i;
+  printf(1, "%s %d #children: %d  children PIDs: ",
+    pdata->name, pdata->pid, pdata->chld_num);
+  for (i=0; i < pdata->chld_num; i++)
+    printf(1, "%d ", pdata->pids[i]);
+  printf(1,"\n");
 }
