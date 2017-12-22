@@ -2,6 +2,7 @@
   "files.associations": {
     "spinlock.h": "c",
     "fs.h": "c",
-    "proc.h": "c"
+    "proc.h": "c",
+    "proc_data.h": "c"
   }
 }

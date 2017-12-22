@@ -119,11 +119,17 @@ int
 sys_get_proc_data(void)
 {
   int pid;
-  struct proc *myproc;
-
-  if(argint(0, &pid) < 0 || argptr(1, (void*)&myproc, sizeof(*myproc)) < 0)
+  struct proc *p;
+  struct proc_data *data;
+  if(argint(0, &pid) < 0 || argptr(1, (void*)&data, sizeof(*data)) < 0)
     return -1;
-  return pid;
+  p = getprocbypid(pid);
+  if (p == 0 || p->state == UNUSED)
+    return -1;
+  strncpy(data->name, p->name, 16);
+  data->pid = p->pid;
+  data->chld_num = getchildrenpid(pid, data->pids);
+  return p->pid;
 }
 
 // Create the path new as a link to the same inode as old.

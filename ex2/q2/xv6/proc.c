@@ -65,6 +65,27 @@ myproc(void) {
   return p;
 }
 
+struct proc*
+getprocbypid(int pid) {
+  struct proc *p;
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == pid)
+      return p;
+  }
+  return 0;
+}
+
+uint
+getchildrenpid(int pid, uint *children) {
+  struct proc *p, *curproc = getprocbypid(pid);
+  int numchildren = 0;
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->parent == curproc)
+      children[numchildren++] = p->pid;
+  }
+  return numchildren;
+}
+
 //PAGEBREAK: 32
 // Look in the process table for an UNUSED proc.
 // If found, change state to EMBRYO and initialize
@@ -532,3 +553,5 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+
