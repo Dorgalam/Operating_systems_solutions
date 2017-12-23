@@ -26,12 +26,60 @@ char getWhomRunOn(int64 input) {
     return (input & 0xc0) >> 6;
 }
 
-float distanceBetweenXAndY(char x1, char y1, char x2, char y2) {
-    return sqrt(
-        pow(x2 - x1, 2) + pow(y2 - y1, 2)
-    );
+float edgeLength(char x1, char y1, char x2, char y2) {
+	return sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
 } 
+void perimeter(int64 input) {
+    char x1, x2, x3, y1, y2, y3,x4,y4, type = getPolygonType(input);
+    float perimeter;
+    getXAndY(input, &x1, &y1, 0);
+    getXAndY(input, &x2, &y2, 1);
+	getXAndY(input, &x3, &y3, 2);
+    if (type == SQUARE) {
+		getXAndY(input, &x4, &y4, 3);
+        perimeter = edgeLength(x1, y1, x2, y2) + edgeLength(x2, y2, x3, y3) + edgeLength(x3, y3, x4, y4) + edgeLength(x4, y4, x1, y1);
+    } else {
+        perimeter = edgeLength(x1, y1, x2, y2) + edgeLength(x2, y2, x3, y3) + edgeLength(x3, y3, x1, y1);
+    }
+    printf("\t perimeter = %.1f\n", perimeter);
+}
 
+void area(int64 input) {
+    // Ax  ( By − Cy ) + Bx  ( Cy − Ay ) + Cx  ( Ay − By )  
+    char x1, x2, x3, y1, y2, y3,y4,x4, type = getPolygonType(input);
+    float area;
+	int x[4],y[4];
+    getXAndY(input, &x1, &y1, 0);
+    getXAndY(input, &x2, &y2, 1);
+    getXAndY(input, &x3, &y3, 2);
+	x[0] = x1;
+	x[1] = x2;
+	x[2] = x3;
+    y[0] = y1;
+	y[1] = y2;
+	y[2] = y3; 
+	if (type == SQUARE) {
+		getXAndY(input, &x4, &y4, 3);
+		x[3] = x4;
+		y[3] = y4;
+        area = polygonArea(x,y, 4);
+    } else {
+        area = polygonArea(x,y,3);
+    }
+    printf("\t area = %.1f\n", area);
+}
+float polygonArea(int *X,int *Y,int numPoints) 
+{ 
+  int area = 0,i;         // Accumulates area in the loop
+  int j = numPoints-1;  // The last vertex is the 'previous' one to the first
+
+  for (i=0; i<numPoints; i++)
+    { 
+		area +=  (X[j]+X[i]) * (Y[j]-Y[i]); 
+		j = i;  //j is previous vertex to i
+    }
+  return area/2.0;
+}
 void getXAndY(int64 input, char *_x, char *_y, int vertixNumber) {
     char x,y;
     int64 xMask = 0x3f00;
@@ -54,39 +102,6 @@ void add_polygon(int64 input) {
     }
 }
 
-void perimeter(int64 input) {
-    char x1, x2, x3, y1, y2, y3, type = getPolygonType(input);
-    float perimeter;
-    getXAndY(input, &x1, &y1, 0);
-    getXAndY(input, &x2, &y2, 1);
-    if (type == SQUARE) {
-        perimeter = 4 * distanceBetweenXAndY(x1, y1, x2, y2);
-    } else {
-        getXAndY(input, &x3, &y3, 2);
-        perimeter = distanceBetweenXAndY(x1, y1, x2, y2) + distanceBetweenXAndY(x2, y2, x3, y3) + distanceBetweenXAndY(x3, y3, x1, y1);
-    }
-    printf("\t perimeter = %.1f\n", perimeter);
-}
-
-void area(int64 input) {
-    // Ax  ( By − Cy ) + Bx  ( Cy − Ay ) + Cx  ( Ay − By )  
-    char x1, x2, x3, y1, y2, y3, type = getPolygonType(input);
-    float area;
-    getXAndY(input, &x1, &y1, 0);
-    getXAndY(input, &x2, &y2, 1);
-    getXAndY(input, &x3, &y3, 2);
-    if (type == SQUARE) {
-        area = pow(distanceBetweenXAndY(x1, y1, x2, y2), 2);
-    } else {
-        area = abs(
-            (x1 * (y2 - y3)) + 
-            (x2 * (y3 - y1)) + 
-            (x3 * (y1 - y2))
-        ) / 2.0;
-    }
-    printf("\t area = %.1f\n", area);
-    
-}
 void print_polygon(int64 input) {
     char x, y, i, numVertices, type;
     type = getPolygonType(input);
