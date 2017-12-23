@@ -52,8 +52,9 @@ char getAction(int64 input);
 char getWhomRunOn(int64);
 void getXAndY(int64 input, char *x, char *y, int vertixNumber);
 void freeList();
-float distanceBetweenXAndY(char x1, char y1, char x2, char y2);
+float edgeLength(char x1, char y1, char x2, char y2);
 void runAction(char action, int64 input);
+float polygonArea(int *X,int *Y,int numPoints);
 
 void (*polygon_functions[6])(int64) = {
     add_polygon,
