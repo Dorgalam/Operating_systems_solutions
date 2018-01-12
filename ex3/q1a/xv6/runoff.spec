@@ -59,6 +59,7 @@ even: kalloc.c  # mild preference
 # vectors.pl either
 # syscall.c either
 # sysproc.c either
+# syssem.c either
 
 # buf.h either
 # dev.h either

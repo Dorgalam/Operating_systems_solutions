@@ -26,3 +26,4 @@
 #define SYS_sem_try_wait 25
 #define SYS_sem_post 26
 #define SYS_sem_reset 27
+#define SYS_sem_unlink 28

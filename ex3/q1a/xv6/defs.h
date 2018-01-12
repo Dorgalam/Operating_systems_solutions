@@ -44,6 +44,7 @@ int             sem_try_wait(struct sem *s);
 int             sem_post(struct sem *s);
 int             sem_reset(struct sem *s, int newVal, int newMaxVal); 
 int             sem_unlink(char *name);
+void            seminit(void);
 
 // fs.c
 void            readsb(int dev, struct superblock *sb);

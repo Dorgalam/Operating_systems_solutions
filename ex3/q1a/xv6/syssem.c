@@ -95,9 +95,7 @@ sys_sem_reset(void)
   struct sem *s;
   if (argsd(0, 0, &s) < 0 || argint(1, &newVal) < 0 || argint(2, &newMaxVal) < 0) 
     return -1;
-  sem_reset(s, newVal, newMaxVal);
-  return 0;
-
+  return sem_reset(s, newVal, newMaxVal);
 } 
 
 int 
@@ -106,7 +104,5 @@ sys_sem_unlink(void)
   char *name;
   if(argstr(0, &name) < 0)
     return -1;
-  sem_unlink(name);
-  return 0;
-
+  return sem_unlink(name);
 }

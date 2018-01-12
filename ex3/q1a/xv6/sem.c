@@ -13,6 +13,13 @@ struct {
   struct sem sem[NSEM];
 } stable;
 
+
+void
+seminit(void)
+{
+  initlock(&stable.gslock, "stable");
+}
+
 struct sem *semdup(struct sem *s) {
   acquire(&stable.gslock);
   ++s->ref;
@@ -23,7 +30,7 @@ struct sem *semdup(struct sem *s) {
 struct sem *sem_open(char *name, int init, int maxVal) {
   struct sem *s, *spot = 0;
   acquire(&stable.gslock);
-  for(s = stable.sem; s < &stable.sem[NSEM]; s++) {
+  for(s = stable.sem; s < stable.sem + NSEM; s++) {
     if (s->ref > 0 && strncmp(s->name, name, 6) == 0) {
       s->ref++;
       release(&stable.gslock);
@@ -32,7 +39,11 @@ struct sem *sem_open(char *name, int init, int maxVal) {
       spot = s;
     }
   }
+  release(&stable.gslock);
   if (spot) {
+    initlock(&spot->sslock, name);
+    acquire(&stable.gslock);
+    safestrcpy(spot->name, name, 6);
     spot->ref = 1;
     spot->count = init;
     spot->maxVal = maxVal;
@@ -40,7 +51,6 @@ struct sem *sem_open(char *name, int init, int maxVal) {
     release(&stable.gslock);
     return spot;
   }
-  release(&stable.gslock);
   return 0;
 }
 
@@ -48,6 +58,7 @@ int sem_close(struct sem *s) {
   acquire(&stable.gslock);
   if (--s->ref == 0)
     wakeup(&stable.gslock);
+  release(&stable.gslock);
   return 0;
 }
 
@@ -97,7 +108,7 @@ int sem_reset(struct sem *s, int newVal, int newMaxVal) {
   int oldVal;
   if ((myproc()->pid != s->owner_pid) || 
     (newMaxVal >= 0 && newMaxVal < s->maxVal) || 
-    (newMaxVal < -1 && newVal < -1))
+    (newMaxVal < 0 && newVal < 0))
     return -1;
   if (newVal >= 0) {
     acquire(&s->sslock);

@@ -109,6 +109,7 @@ extern int sys_sem_wait(void);
 extern int sys_sem_try_wait(void);
 extern int sys_sem_post(void);
 extern int sys_sem_reset(void);
+extern int sys_sem_unlink(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -137,7 +138,8 @@ static int (*syscalls[])(void) = {
 [SYS_sem_wait] sys_sem_wait,
 [SYS_sem_try_wait] sys_sem_try_wait,
 [SYS_sem_post] sys_sem_post,
-[SYS_sem_reset] sys_sem_reset
+[SYS_sem_reset] sys_sem_reset,
+[SYS_sem_unlink] sys_sem_unlink
 };
 
 void
