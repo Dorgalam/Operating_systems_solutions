@@ -24,5 +24,5 @@ writer: writer.c
 
 clean: 
 	rm -rf polygon writer out.txt polygon.dSYM *.o *.log
-test: 
+test: all 
 	./$(PROG1) < in.txt 

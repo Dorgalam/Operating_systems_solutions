@@ -26,6 +26,7 @@ char getWhomRunOn(int64 input) {
     return (input & 0xc0) >> 6;
 }
 
+
 float edgeLength(char x1, char y1, char x2, char y2) {
 	return sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
 } 
