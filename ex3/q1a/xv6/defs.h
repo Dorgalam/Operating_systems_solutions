@@ -37,6 +37,7 @@ int             filewrite(struct file*, char*, int n);
 
 // sem.c
 struct sem*     sem_open(char *name, int init, int maxVal);
+struct sem*     semdup(struct sem*);
 int             sem_close(struct sem *s);
 int             sem_wait(struct sem *s);
 int             sem_try_wait(struct sem *s);

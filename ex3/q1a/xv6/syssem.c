@@ -64,43 +64,38 @@ sys_sem_close(void)
 int 
 sys_sem_wait(void)
 {
-  int sd;
   struct sem *s;
-  if (argsd(0, &sd, &s) < 0) 
+  if (argsd(0, 0, &s) < 0) 
     return -1;
-  return 0;
-
+  return sem_wait(s);
 }
 
 int 
 sys_sem_try_wait(void)
 {
-  int sd;
   struct sem *s;
-  if (argsd(0, &sd, &s) < 0) 
+  if (argsd(0, 0, &s) < 0) 
     return -1;
-  return 0;
-
+  return (sem_try_wait(s));
 }
 
 int 
 sys_sem_post(void)
 {
-  int sd;
   struct sem *s;
-  if (argsd(0, &sd, &s) < 0) 
+  if (argsd(0, 0, &s) < 0) 
     return -1;
-  return 0;
-
+  return sem_post(s);
 }
 
 int 
 sys_sem_reset(void)
 {
-  int sd, newVal, newMaxVal;
+  int newVal, newMaxVal;
   struct sem *s;
-  if (argsd(0, &sd, &s) < 0 || argint(1, &newVal) < 0 || argint(2, &newMaxVal) < 0) 
+  if (argsd(0, 0, &s) < 0 || argint(1, &newVal) < 0 || argint(2, &newMaxVal) < 0) 
     return -1;
+  sem_reset(s, newVal, newMaxVal);
   return 0;
 
 } 
@@ -111,6 +106,7 @@ sys_sem_unlink(void)
   char *name;
   if(argstr(0, &name) < 0)
     return -1;
+  sem_unlink(name);
   return 0;
 
 }

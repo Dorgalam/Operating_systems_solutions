@@ -208,6 +208,10 @@ fork(void)
       np->ofile[i] = filedup(curproc->ofile[i]);
   np->cwd = idup(curproc->cwd);
 
+  for(i = 0; i < NOSEM; i++)
+    if(curproc->osem[i])
+      np->osem[i] = semdup(curproc->osem[i]);
+
   safestrcpy(np->name, curproc->name, sizeof(curproc->name));
 
   pid = np->pid;
@@ -229,7 +233,7 @@ exit(void)
 {
   struct proc *curproc = myproc();
   struct proc *p;
-  int fd;
+  int fd, sd;
 
   if(curproc == initproc)
     panic("init exiting");
@@ -241,6 +245,14 @@ exit(void)
       curproc->ofile[fd] = 0;
     }
   }
+
+  for(sd = 0; sd < NOSEM; sd++) {
+    if(curproc->osem[sd]) {
+      sem_close(curproc->osem[sd]);
+      curproc->osem[sd] = 0;
+    }
+  }
+
 
   begin_op();
   iput(curproc->cwd);
