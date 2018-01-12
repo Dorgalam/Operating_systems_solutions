@@ -1,6 +1,7 @@
 struct buf;
 struct context;
 struct file;
+struct sem;
 struct inode;
 struct pipe;
 struct proc;
@@ -33,6 +34,15 @@ void            fileinit(void);
 int             fileread(struct file*, char*, int n);
 int             filestat(struct file*, struct stat*);
 int             filewrite(struct file*, char*, int n);
+
+// sem.c
+struct sem*     sem_open(char *name, int init, int maxVal);
+int             sem_close(struct sem *s);
+int             sem_wait(struct sem *s);
+int             sem_try_wait(struct sem *s);
+int             sem_post(struct sem *s);
+int             sem_reset(struct sem *s, int newVal, int newMaxVal); 
+int             sem_unlink(char *name);
 
 // fs.c
 void            readsb(int dev, struct superblock *sb);

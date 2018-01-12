@@ -14,6 +14,7 @@
 #include "spinlock.h"
 #include "sleeplock.h"
 #include "file.h"
+#include "sem.h"
 #include "fcntl.h"
 
 // Fetch the nth word-sized system call argument as a file descriptor
