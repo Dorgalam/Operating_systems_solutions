@@ -57,8 +57,7 @@ sys_sem_close(void)
   if (argsd(0, &sd, &s) < 0) 
     return -1;
   myproc()->osem[sd] = 0;
-  sem_close(s);
-  return 0;
+  return sem_close(s);
 }
 
 int 
