@@ -23,7 +23,7 @@ main(int argc, char *argv[])
     exit();
   }
   wait();
-  int psd = sem_open("parent", 2, 2);
+  int psd = sem_open("dad", 2, 2);
   if (fork() == 0) {
     printf(1, "sem_close:\n");
     print_test("it should allow closing sd got from parent", sem_close(psd) == 0);
@@ -67,6 +67,15 @@ main(int argc, char *argv[])
     print_test("it should not allow changing invalid values", (sem_reset(srsd, 0, 3) < 0) && sem_reset(srsd, -1, -1) < 0);
     exit();
   }
+  wait();
+  if (fork() == 0) {
+    printf(1, "sem_unlink:\n");
+    sem_close(psd);
+    sem_unlink("dad");
+    print_test("it should continue after parent closes the sem", 1);
+  }
+  sleep(20);
+  sem_close(psd);
   wait();
   exit();
 }

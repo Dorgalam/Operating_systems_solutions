@@ -91,8 +91,8 @@ int sem_try_wait(struct sem *s) {
   }
   release(&s->sslock);
   return res;
-
 }
+
 int sem_post(struct sem *s) {
   int res = 0;
   acquire(&s->sslock);
@@ -102,8 +102,8 @@ int sem_post(struct sem *s) {
     wakeup(s);
   release(&s->sslock);
   return res;
-
 }
+
 int sem_reset(struct sem *s, int newVal, int newMaxVal) {
   int oldVal;
   if ((myproc()->pid != s->owner_pid) || 
@@ -138,7 +138,7 @@ int sem_unlink(char *name) {
   for (;;) {
     if (found->ref == 0) {
       found->name[0] = 0;
-      release(&found->sslock);
+      release(&stable.gslock);
       return 0;
     }
     if (myproc()->killed) {
