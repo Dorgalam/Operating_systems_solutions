@@ -49,6 +49,14 @@ int main(int argc, char *argv[]) {
   sem_close(waitcd); // child processes may start doing their thing
   for(i = 0; i < consNum + prodNum; ++i)
     wait(); // wait for all to finish and exit so we won't have any wandering zombies
+  sem_close(buffa);
+  sem_unlink("buffa");
+  sem_close(buffb);
+  sem_unlink("buffb");
+  sem_close(totald);
+  sem_unlink("total");
+  sem_close(write);
+  sem_unlink("write");
   exit();
 }
 

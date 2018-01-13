@@ -5,4 +5,6 @@ struct sem {
     int count;
     int ref;
     int maxVal;
+    char linked;
+    char waitingForDeath;
 };

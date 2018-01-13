@@ -31,11 +31,11 @@ struct sem *sem_open(char *name, int init, int maxVal) {
   struct sem *s, *spot = 0;
   acquire(&stable.gslock);
   for(s = stable.sem; s < stable.sem + NSEM; s++) {
-    if (s->ref > 0 && strncmp(s->name, name, 6) == 0) {
+    if (s->ref > 0 && strncmp(s->name, name, SEMNAME) == 0) {
       s->ref++;
       release(&stable.gslock);
       return s;
-    } else if (s->ref == 0 && !spot) {
+    } else if (s->linked == 0 && !spot) {
       spot = s;
     }
   }
@@ -43,11 +43,13 @@ struct sem *sem_open(char *name, int init, int maxVal) {
   if (spot) {
     initlock(&spot->sslock, name);
     acquire(&stable.gslock);
-    safestrcpy(spot->name, name, 6);
+    safestrcpy(spot->name, name, SEMNAME);
+    spot->linked = 1;
     spot->ref = 1;
     spot->count = init;
     spot->maxVal = maxVal;
     spot->owner_pid = myproc()->pid;
+    spot->waitingForDeath = 0;
     release(&stable.gslock);
     return spot;
   }
@@ -56,7 +58,7 @@ struct sem *sem_open(char *name, int init, int maxVal) {
 
 int sem_close(struct sem *s) {
   acquire(&stable.gslock);
-  if (--s->ref == 0)
+  if (--s->ref == 0 && s->waitingForDeath)
     wakeup(&stable.gslock);
   release(&stable.gslock);
   return 0;
@@ -129,15 +131,16 @@ int sem_unlink(char *name) {
   struct sem *s, *found = 0;
   acquire(&stable.gslock);
   for(s = stable.sem; s < &stable.sem[NSEM] && !found; s++) 
-    if (strncmp(s->name, name, 6) == 0)
+    if (strncmp(s->name, name, SEMNAME) == 0)
       found = s;
   release(&stable.gslock);
   if (!found)
     return -1;
   acquire(&stable.gslock);
+  found->waitingForDeath = 1;
   for (;;) {
     if (found->ref == 0) {
-      found->name[0] = 0;
+      found->linked = 0;
       release(&stable.gslock);
       return 0;
     }

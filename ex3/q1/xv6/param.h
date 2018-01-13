@@ -13,3 +13,4 @@
 #define FSSIZE       1000  // size of file system in blocks
 #define NOSEM        5   // open semaphores per process
 #define NSEM         7   // open semaphores per process
+#define SEMNAME      10
