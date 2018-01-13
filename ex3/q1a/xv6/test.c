@@ -3,8 +3,11 @@
 #include "user.h"
 
 void print_test(char *msg, char res) {
-  printf(1, "\t%s %s\n", msg, res ? "OK" : "FAILED");
+  printf(1, "\t%s - %s\n", msg, res ? "OK" : "FAILED");
 }
+
+// nice little program running tests for most of the funcionality in sem_*
+// tests may fail by either writing FAILED or by getting stuck, should be fairly quick otherwise
 
 int
 main(int argc, char *argv[])
