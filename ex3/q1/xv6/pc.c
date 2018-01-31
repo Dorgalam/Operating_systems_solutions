@@ -4,10 +4,19 @@
 #include "pc_def.c"
 
 int main(int argc, char *argv[]) {
+  
+  if (argc != 4) {
+    printf(1, "Error, not enough argument variables\n");
+    exit();
+  }
   int prodNum = atoi(argv[1]), 
     consNum = atoi(argv[2]), 
     msgNumPerProd = atoi(argv[3]),
     i, waitcd, buffb, buffa, write, j, totald;
+  if (prodNum == 0 || consNum == 0 || msgNumPerProd == 0) {
+    printf(1, "Error, one of the arguments is invalid\n");    
+    exit();    
+  }
   waitcd = sem_open("waitc", 0, 0); // exists simply to be closed, children will wait until it is unlinked and parent will close it once all children were created
   buffa = sem_open("buffa", MAX_MSG, MAX_MSG); // available spots in the buff
   buffb = sem_open("buffb", 0, MAX_MSG); // filled spots in the buff
