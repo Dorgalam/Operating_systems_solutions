@@ -6,7 +6,7 @@
 int main(int argc, char *argv[]) {
   
   if (argc != 4) {
-    printf(1, "Error, not enough argument variables\n");
+    printf(1, "Error, invalid number of argument variables, please provide exactly 3\n");
     exit();
   }
   int prodNum = atoi(argv[1]), 
