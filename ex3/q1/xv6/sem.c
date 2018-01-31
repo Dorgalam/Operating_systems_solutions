@@ -116,9 +116,9 @@ int sem_reset(struct sem *s, int newVal, int newMaxVal) {
     acquire(&s->sslock);
     oldVal = s->count;
     s->count = newVal;
-    release(&s->sslock);
     if (newVal > 0 && oldVal == 0) 
       wakeup(s);
+    release(&s->sslock);
   }
   if (newMaxVal > s->maxVal) {
     acquire(&s->sslock);
